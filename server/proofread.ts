@@ -11,26 +11,52 @@ const DEFAULT_MODEL = "claude-sonnet-4-6";
 /** チャンクの同時実行数（env PROOFREAD_CONCURRENCY で上書き可能） */
 const DEFAULT_CONCURRENCY = 3;
 
+/** 1 チャンクあたりの最大出力トークン（不足すると JSON が途切れて解析に失敗する） */
+const MAX_TOKENS = 32000;
+
+/** 1 チャンクの最大試行回数（解析失敗などで再試行する） */
+const MAX_ATTEMPTS = 2;
+
 /** 1 チャンクを校正して tool use で構造化出力を得る */
 async function proofreadChunk(
   client: Anthropic,
   model: string,
   text: string,
 ): Promise<Finding[]> {
-  const message = await client.messages.create({
-    model,
-    max_tokens: 16000,
-    system: SYSTEM_PROMPT,
-    tools: [FINDINGS_TOOL],
-    tool_choice: { type: "tool", name: FINDINGS_TOOL.name },
-    messages: [{ role: "user", content: buildUserPrompt(text) }],
-  });
+  // 出力が大きくなりうるためストリーミングで受ける（HTTP タイムアウト回避）
+  const message = await client.messages
+    .stream({
+      model,
+      max_tokens: MAX_TOKENS,
+      system: SYSTEM_PROMPT,
+      tools: [FINDINGS_TOOL],
+      tool_choice: { type: "tool", name: FINDINGS_TOOL.name },
+      messages: [{ role: "user", content: buildUserPrompt(text) }],
+    })
+    .finalMessage();
 
   const toolUse = message.content.find((block) => block.type === "tool_use");
   if (!toolUse || toolUse.type !== "tool_use") {
     throw new Error("構造化出力（tool_use）が得られませんでした");
   }
   return parseFindings(toolUse.input);
+}
+
+/** 失敗時に再試行しつつ 1 チャンクを校正する */
+async function proofreadChunkWithRetry(
+  client: Anthropic,
+  model: string,
+  text: string,
+): Promise<Finding[]> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    try {
+      return await proofreadChunk(client, model, text);
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError;
 }
 
 /** 同時実行数を制限しつつ items を fn にかける簡易プール */
@@ -78,7 +104,7 @@ export async function proofread(text: string): Promise<Finding[]> {
 
   const chunks = splitIntoChunks(text);
   if (chunks.length === 1) {
-    return proofreadChunk(client, model, chunks[0]);
+    return proofreadChunkWithRetry(client, model, chunks[0]);
   }
 
   const concurrency = Number(
@@ -90,7 +116,7 @@ export async function proofread(text: string): Promise<Finding[]> {
     concurrency,
     async (chunk, i) => {
       try {
-        return await proofreadChunk(client, model, chunk);
+        return await proofreadChunkWithRetry(client, model, chunk);
       } catch (err) {
         console.warn(
           `チャンク ${i + 1}/${chunks.length} の校正に失敗:`,

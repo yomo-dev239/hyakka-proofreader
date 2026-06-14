@@ -11,11 +11,7 @@ import type { Finding, Perspective } from "../shared/types.ts";
 export const PERSPECTIVE_LABEL: Record<Perspective, string> = {
   typo: "誤字脱字",
   syntax: "構文の乱れ",
-  subjectivity: "過剰な主観",
-  redundancy: "冗長な情報",
   duplication: "重複した情報",
-  unsourced: "出典なき断定",
-  insider: "過度な内輪ノリ",
 };
 
 export type LocateStatus = "ok" | "ambiguous" | "notfound";

@@ -15,7 +15,7 @@ import {
   buildReviewHtml,
 } from "./review.ts";
 
-config();
+config({ quiet: true });
 
 const inputPath = process.argv[2];
 if (!inputPath) {

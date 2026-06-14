@@ -5,15 +5,11 @@
  * 永続エンティティは持たず、この Finding 群だけを扱う。
  */
 
-/** 校正の観点（課題①〜④に対応） */
+/** 校正の観点 */
 export const PERSPECTIVES = [
-  "typo", // 誤字脱字・漢字変換ミス（課題①）
+  "typo", // 誤字脱字・漢字変換ミス
   "syntax", // 構文の乱れ
-  "subjectivity", // 過剰な主観（課題③）
-  "redundancy", // 冗長すぎる情報（課題④）
-  "duplication", // 重複した情報（課題④）
-  "unsourced", // 出典なき断定
-  "insider", // 過度な内輪ノリ（課題②の裏返しで読みやすさは保つ）
+  "duplication", // 重複した情報
 ] as const;
 
 export type Perspective = (typeof PERSPECTIVES)[number];
