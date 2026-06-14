@@ -13,6 +13,14 @@ dist-ssr
 *.local
 *.tsbuildinfo
 
+# 環境変数（APIキー）。.env.example はコミットする
+.env
+.env.*
+!.env.example
+
+# 検証用の実データ（コミットしない）。ディレクトリ自体は .gitkeep で維持
+articles/*.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
