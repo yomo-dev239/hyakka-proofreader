@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    system-ui, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
+  }
+}
