@@ -5,7 +5,7 @@ const validFinding = {
   perspective: "typo",
   quote: "誤字れす",
   comment: "「れす」は「です」の誤変換と思われます",
-  suggestion: "です",
+  replacement: "です",
   severity: "high",
 };
 
@@ -14,7 +14,7 @@ describe("parseFindings", () => {
     const result = parseFindings({ findings: [validFinding] });
     expect(result).toHaveLength(1);
     expect(result[0]?.perspective).toBe("typo");
-    expect(result[0]?.suggestion).toBe("です");
+    expect(result[0]?.replacement).toBe("です");
   });
 
   it("空配列を許容する", () => {

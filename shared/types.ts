@@ -23,15 +23,15 @@ export const SEVERITIES = ["high", "medium", "low"] as const;
 
 export type Severity = (typeof SEVERITIES)[number];
 
-/** LLM が返す 1 件の指摘（「引用 → 指摘 → 提案」を 1 単位とする） */
+/** LLM が返す 1 件の指摘（引用・指摘・置換案を 1 単位とする） */
 export type Finding = {
   perspective: Perspective;
-  /** フロントで原文から検索して強調するための引用（原文の一部をそのまま） */
+  /** 原文から検索して位置を特定するための引用（一字一句そのまま） */
   quote: string;
   /** なぜ問題かの説明 */
   comment: string;
-  /** 修正案（誤字脱字以外は「消す」のではなく提案にとどめる） */
-  suggestion: string;
+  /** quote をそのまま置き換える修正後テキスト（採用すれば原文に適用できる） */
+  replacement: string;
   severity: Severity;
 };
 

@@ -51,8 +51,15 @@ npm install
    # または: npm run proofread -- articles/example.txt
    ```
 
-4. 結果が観点別（誤字脱字・構文の乱れ・過剰な主観 など）にコンソール表示され、
-   あわせて `articles/example.result.txt` に保存される。
+4. 2 つの結果ファイルが出力される。
+   - `articles/example.result.txt` … 観点別の指摘テキスト
+   - `articles/example.review.html` … **差分レビュー**（ブラウザで開く）
+
+5. `articles/example.review.html` をブラウザで開き、
+
+   - 原文上で GitHub 風の差分（赤=削除 / 緑=追加）を確認する
+   - 採用したい指摘にチェックを入れる（誤字脱字・構文は既定でオン）
+   - 「修正版テキスト」をコピー／ダウンロードして、ピクシブ百科の記事に貼り付ける
 
 ## スクリプト
 

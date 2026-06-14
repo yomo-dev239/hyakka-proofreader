@@ -18,8 +18,9 @@ dist-ssr
 .env.*
 !.env.example
 
-# 検証用の実データ（コミットしない）。ディレクトリ自体は .gitkeep で維持
-articles/*.txt
+# 原稿と出力（コミットしない）。ディレクトリ自体は .gitkeep で維持
+articles/*
+!articles/.gitkeep
 
 # Editor directories and files
 .vscode/*

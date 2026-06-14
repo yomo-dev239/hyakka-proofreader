@@ -58,7 +58,7 @@ function dedupeFindings(findings: Finding[]): Finding[] {
   const seen = new Set<string>();
   const out: Finding[] = [];
   for (const f of findings) {
-    const key = `${f.perspective}|${f.quote}|${f.suggestion}`;
+    const key = `${f.perspective}|${f.quote}|${f.replacement}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(f);

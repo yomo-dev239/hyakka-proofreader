@@ -8,7 +8,7 @@ export const findingSchema = z.object({
   perspective: z.enum(PERSPECTIVES),
   quote: z.string().min(1),
   comment: z.string().min(1),
-  suggestion: z.string(),
+  replacement: z.string().min(1),
   severity: z.enum(SEVERITIES),
 });
 
@@ -61,14 +61,18 @@ export const FINDINGS_TOOL: Anthropic.Tool = {
               description: "原文から一字一句そのまま抜き出した該当箇所",
             },
             comment: { type: "string", description: "なぜ問題かの説明" },
-            suggestion: { type: "string", description: "修正案" },
+            replacement: {
+              type: "string",
+              description:
+                "quote をそのまま置き換える修正後テキスト（置き換え不要なら quote と同じ）",
+            },
             severity: { type: "string", enum: [...SEVERITIES] },
           },
           required: [
             "perspective",
             "quote",
             "comment",
-            "suggestion",
+            "replacement",
             "severity",
           ],
           additionalProperties: false,
